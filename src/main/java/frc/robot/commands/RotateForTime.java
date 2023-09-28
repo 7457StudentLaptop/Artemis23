@@ -8,13 +8,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-public class DriveForTime extends CommandBase {
+public class RotateForTime extends CommandBase {
   public final DrivetrainSubsystem drivetrain;
   double endtime;
   double speed = 0;
   //Timer timer;
   /** Creates a new FreeClimb. */
-  public DriveForTime(DrivetrainSubsystem mdrivetrain, double mspeed) {
+  public RotateForTime(DrivetrainSubsystem mdrivetrain, double mspeed) {
     // Use addRequirements() here to declare subsystem dependencies.
     drivetrain = mdrivetrain;
     speed = mspeed;
@@ -31,7 +31,7 @@ public class DriveForTime extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(speed,0,0, drivetrain.getGyroscopeRotation()));
+drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(0,0,speed, drivetrain.getGyroscopeRotation()));
 System.out.println("execute");
   }
 

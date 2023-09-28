@@ -47,10 +47,10 @@ public class RobotContainer {
   public RobotContainer() {
 
     autoChooser = new SendableChooser<>();
-    autoChooser.addOption("Two Ball Hangar Auto", TwoBallHangarAuto());
-    autoChooser.addOption("One Ball Auto", OneBallAuto());
-    autoChooser.addOption("Two Ball Open Auto", TwoBallOpenAuto());
-    autoChooser.addOption("Two Ball Wall Auto", TwoBallWallAuto());
+    //autoChooser.addOption("Two Ball Hangar Auto", TwoBallHangarAuto());
+    //autoChooser.addOption("One Ball Auto", OneBallAuto());
+    //autoChooser.addOption("Two Ball Open Auto", TwoBallOpenAuto());
+    //autoChooser.addOption("Two Ball Wall Auto", TwoBallWallAuto());
     autoChooser.addOption("OneCubeBackupAuto", OneCubeBackupAuto());
     autoChooser.addOption("OneCubeBalanceAuto", OneCubeBalanceAuto());
     autoChooser.setDefaultOption("OneCubeBalanceAuto", OneCubeBalanceAuto());

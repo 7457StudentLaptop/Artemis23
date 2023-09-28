@@ -31,7 +31,7 @@ public class DriveForTime extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-drivetrain.drive(new ChassisSpeeds(speed,0,0));
+drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(speed,0,0, drivetrain.getGyroscopeRotation()));
 System.out.println("execute");
   }
 

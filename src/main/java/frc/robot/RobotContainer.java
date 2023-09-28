@@ -51,8 +51,9 @@ public class RobotContainer {
     autoChooser.addOption("One Ball Auto", OneBallAuto());
     autoChooser.addOption("Two Ball Open Auto", TwoBallOpenAuto());
     autoChooser.addOption("Two Ball Wall Auto", TwoBallWallAuto());
+    autoChooser.addOption("OneCubeBackupAuto", OneCubeBackupAuto());
     autoChooser.addOption("OneCubeBalanceAuto", OneCubeBalanceAuto());
-    autoChooser.setDefaultOption("OneCubeBalanceAuto", OneCubeBalanceAuto());
+    autoChooser.setDefaultOption("OneCubeBackupAuto", OneCubeBackupAuto());
     SmartDashboard.putData(autoChooser);
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -125,7 +126,7 @@ public Command TwoBallOpenAuto(){
       );
 }
 
-public Command OneCubeBalanceAuto(){
+public Command OneCubeBackupAuto(){
   return new SequentialCommandGroup(
     new SetYaw(m_drivetrainSubsystem, 180),
     new WaitCommand(1),
@@ -135,6 +136,20 @@ public Command OneCubeBalanceAuto(){
     )
   );
 }
+
+public Command OneCubeBalanceAuto(){
+  return new SequentialCommandGroup(
+    new SetYaw(m_drivetrainSubsystem, 180),
+    new WaitCommand(1),
+    new SequentialCommandGroup(
+      new ScoreLow(indexer).withTimeout(3),
+      new DriveForTime(m_drivetrainSubsystem, -1).withTimeout(3.0),
+      new AutoBalance(m_drivetrainSubsystem)
+    )
+  );
+}
+
+
 public Command TwoBallHangarAuto(){
   return new SequentialCommandGroup(
       new ZeroYaw(m_drivetrainSubsystem), 

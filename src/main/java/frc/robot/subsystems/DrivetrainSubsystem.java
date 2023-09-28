@@ -79,6 +79,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
   private double angleAdjust = 0;
   private double yaw;
+  private double pitch;
+  private double roll;
 
   public DrivetrainSubsystem() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
@@ -167,7 +169,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_navx.zeroYaw();
     angleAdjust = 0;
   }
-  
+
   public void setGyroscope(double m_angle) {
         angleAdjust = m_angle;
       }
@@ -191,16 +193,40 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(360.0 - yaw);
   }
 
+  public Rotation2d getPitch(){
+        pitch = m_navx.getPitch();
+        return Rotation2d.fromDegrees(pitch);
+  }
+
+  public Rotation2d getRoll(){
+        roll = m_navx.getPitch();
+        return Rotation2d.fromDegrees(roll);
+  }
+
   public double getAngleDegrees(){
         yaw = m_navx.getYaw() + angleAdjust;
         if (yaw > 180){yaw = yaw - 360;}
         return yaw;
   }
 
+
   public void drive(ChassisSpeeds chassisSpeeds) {
-    m_chassisSpeeds = chassisSpeeds;
-    
+    m_chassisSpeeds = chassisSpeeds; 
   }
+
+  public void stop() {
+        m_chassisSpeeds = new ChassisSpeeds(0.0,0.0,0.0); 
+      }
+
+  public void stopWithX() {
+       stop();
+       SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
+       m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, 3.14/4);
+       m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, 3*3.14/4);
+       m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, 5*3.14/4);
+       m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, 7*3.14/4);
+    
+      }
 
   @Override
   public void periodic() {

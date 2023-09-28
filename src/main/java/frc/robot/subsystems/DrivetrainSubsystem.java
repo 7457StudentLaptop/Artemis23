@@ -219,15 +219,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_chassisSpeeds = new ChassisSpeeds(0.0,0.0,0.0); 
       }
 
-  public void stopWithX() {
-       stop();
-       SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
-       m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, 3.14/4);
-       m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, 3*3.14/4);
-       m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, 5*3.14/4);
-       m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, 7*3.14/4);
-    
-      }
+  //public void stopWithX() {
+  //      m_chassisSpeeds = new ChassisSpeeds(0.0,0.0,1.0); 
+  //     m_chassisSpeeds = new ChassisSpeeds(0.0,0.0,0.0); 
+  //      }
 
   @Override
   public void periodic() {

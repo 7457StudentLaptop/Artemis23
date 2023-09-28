@@ -53,7 +53,8 @@ public class RobotContainer {
     //autoChooser.addOption("Two Ball Wall Auto", TwoBallWallAuto());
     autoChooser.addOption("OneCubeBackupAuto", OneCubeBackupAuto());
     autoChooser.addOption("OneCubeBalanceAuto", OneCubeBalanceAuto());
-    autoChooser.setDefaultOption("OneCubeBalanceAuto", OneCubeBalanceAuto());
+    autoChooser.addOption("OneCubeMobilityBalanceAuto", OneCubeMobilityBalanceAuto());
+    autoChooser.setDefaultOption("OneCubeMobilityBalanceAuto", OneCubeMobilityBalanceAuto());
     SmartDashboard.putData(autoChooser);
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -94,9 +95,9 @@ public class RobotContainer {
     // operator commands
     operatorJoyStick.rightBumper().whileTrue(new RunIntakeCommand(intake, indexer));
     operatorJoyStick.leftBumper().whileTrue(new PurgeIntakeCommand(intake, indexer));
-    operatorJoyStick.x().onTrue(new SetFlywheelToSetShot(shooter));
-    operatorJoyStick.y().onTrue(new SetFlywheelToSetShotHigh(shooter));
-    operatorJoyStick.b().onTrue(new SetFlywheelToSetShotLow(shooter));
+    operatorJoyStick.x().whileTrue(new SetFlywheelToSetShot(shooter));
+    operatorJoyStick.y().whileTrue(new SetFlywheelToSetShotHigh(shooter));
+    operatorJoyStick.b().whileTrue(new SetFlywheelToSetShotLow(shooter));
      
   }
 
@@ -138,12 +139,33 @@ public Command OneCubeBackupAuto(){
 }
 
 public Command OneCubeBalanceAuto(){
+  double waittime = 1;
+  double scoretime = 2;
+  double drivetime = 2.8; //2.8
   return new SequentialCommandGroup(
     new SetYaw(m_drivetrainSubsystem, 180),
-    new WaitCommand(1),
-    new ScoreLow(indexer).withTimeout(2),
-    new DriveForTime(m_drivetrainSubsystem, 1).withTimeout(2.8),
-    new AutoBalance(m_drivetrainSubsystem)
+    new WaitCommand(waittime),
+    new ScoreLow(indexer).withTimeout(scoretime),
+    new DriveForTime(m_drivetrainSubsystem, 1).withTimeout(drivetime),
+    new AutoBalance(m_drivetrainSubsystem).withTimeout(14 - waittime - scoretime - drivetime),
+    new RotateForTime(m_drivetrainSubsystem, 0.06).withTimeout(1)
+    );
+}
+public Command OneCubeMobilityBalanceAuto(){
+  double waittime = 1;
+  double scoretime = 2;
+  double drivetime1 = 5; //backup time
+  double waittime2 = 0.1;
+  double drivetime2 = 2.7; //back onto charge station time
+  return new SequentialCommandGroup(
+    new SetYaw(m_drivetrainSubsystem, 180),
+    new WaitCommand(waittime),
+    new ScoreLow(indexer).withTimeout(scoretime),
+    new DriveForTime(m_drivetrainSubsystem, 1).withTimeout(drivetime1),
+    new WaitCommand(waittime2),
+    new DriveForTime(m_drivetrainSubsystem, -1).withTimeout(drivetime2),
+    new AutoBalance(m_drivetrainSubsystem).withTimeout(14 - waittime - scoretime - drivetime1 - drivetime2),
+    new RotateForTime(m_drivetrainSubsystem, 0.06).withTimeout(1)
     );
 }
 

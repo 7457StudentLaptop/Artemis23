@@ -8,12 +8,13 @@
 
 package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class AutoBalance extends CommandBase {
   private static final Double speedMetersPerSec = 0.254;
-  private static final Double positionThresholdDegrees = 5.0;
+  private static final Double positionThresholdDegrees = 1.0;
   //private static final Double velocityThresholdDegreesPerSec = 6.0;
 
 
@@ -34,28 +35,41 @@ public class AutoBalance extends CommandBase {
   public void execute() {
     // Calculate charge station angle and velocity
     angleDegrees =
-        drive.getGyroscopeRotation().getCos() * drive.getPitch().getDegrees()
-            + drive.getGyroscopeRotation().getSin() * drive.getRoll().getDegrees();
+        drive.getGyroscopeRotation().getCos() * drive.getPitch();
+           // + drive.getGyroscopeRotation().getSin() * drive.getRoll().getDegrees();
     //double angleVelocityDegreesPerSec =
     //    drive.getGyroscopeRotation().getCos() * Units.radiansToDegrees(drive.getPitchVelocity())
     //        + drive.getGyroscopeRotation().getSin() * Units.radiansToDegrees(drive.getRollVelocity());
-    boolean shouldStop = ((angleDegrees < positionThresholdDegrees) && (positionThresholdDegrees > -10));
+    boolean shouldStop = ((angleDegrees < positionThresholdDegrees) && (angleDegrees > -positionThresholdDegrees));
         //(angleDegrees < 0.0 && angleVelocityDegreesPerSec > velocityThresholdDegreesPerSec)
          //   || (angleDegrees > 0.0
          //       && angleVelocityDegreesPerSec < -velocityThresholdDegreesPerSec);
 
+    SmartDashboard.putNumber("AngleDegrees", angleDegrees);
+    SmartDashboard.putNumber("Yaw", drive.getGyroscopeRotation().getDegrees());
+    SmartDashboard.putNumber("Pitch", drive.getPitch());
+    SmartDashboard.putNumber("Roll", drive.getRoll());
+    
     // Send velocity to drive
     if (shouldStop) {
       drive.stop();
     } else {
-      drive.drive(
+      if (Math.abs(angleDegrees) > 5){
+        drive.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
               speedMetersPerSec * (angleDegrees > 0.0 ? -1.0 : 1.0),
               0.0,
               0.0,
               drive.getGyroscopeRotation()));
+            } else{
+              drive.drive(
+          ChassisSpeeds.fromFieldRelativeSpeeds(
+              0.5*speedMetersPerSec * (angleDegrees > 0.0 ? -1.0 : 1.0),
+              0.0,
+              0.0,
+              drive.getGyroscopeRotation()));
+            }
     }
-
   }
 
   @Override
@@ -65,6 +79,7 @@ public class AutoBalance extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(angleDegrees) < positionThresholdDegrees;
+    return false;
+    //return Math.abs(angleDegrees) < positionThresholdDegrees;
   }
 }

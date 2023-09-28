@@ -171,6 +171,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   }
 
   public void setGyroscope(double m_angle) {
+        m_navx.zeroYaw();
         angleAdjust = m_angle;
       }
 
@@ -193,14 +194,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(360.0 - yaw);
   }
 
-  public Rotation2d getPitch(){
-        pitch = m_navx.getPitch();
-        return Rotation2d.fromDegrees(pitch);
+  public double getPitch(){
+        pitch = m_navx.getRoll();
+        return pitch;
   }
 
-  public Rotation2d getRoll(){
+  public double getRoll(){
         roll = m_navx.getPitch();
-        return Rotation2d.fromDegrees(roll);
+        return roll;
   }
 
   public double getAngleDegrees(){
@@ -230,7 +231,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
     ///SwerveDriveKinematics.normalizeWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
     m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());

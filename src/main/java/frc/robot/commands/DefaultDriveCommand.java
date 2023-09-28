@@ -31,25 +31,25 @@ public class DefaultDriveCommand extends CommandBase {
     @Override
     public void execute() {
 
-        if (RobotContainer.driverJoyStick.getLeftBumper()){
+        if (RobotContainer.driverJoyStick.leftBumper().getAsBoolean()){
             RobotContainer.speedmultiplier = Constants.BOOST_SPEED_MULT;
         }else
-        if (RobotContainer.driverJoyStick.getLeftBumper()){
+        if (RobotContainer.driverJoyStick.leftTrigger().getAsBoolean()){
             RobotContainer.speedmultiplier = Constants.SLOW_SPEED_MULT;
         }else RobotContainer.speedmultiplier = Constants.BASE_SPEED_MULT;
 
         // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
-        if (RobotContainer.driverJoyStick.getYButton()||RobotContainer.driverJoyStick.getXButton()||RobotContainer.driverJoyStick.getAButton()||RobotContainer.driverJoyStick.getBButton()){
-            if(RobotContainer.driverJoyStick.getAButton()){
+        if (RobotContainer.driverJoyStick.y().getAsBoolean()||RobotContainer.driverJoyStick.x().getAsBoolean()||RobotContainer.driverJoyStick.a().getAsBoolean()||RobotContainer.driverJoyStick.b().getAsBoolean()){
+            if(RobotContainer.driverJoyStick.a().getAsBoolean()){
                 Setpoint = 180.0;
             }else
-            if(RobotContainer.driverJoyStick.getBButton()){
+            if(RobotContainer.driverJoyStick.b().getAsBoolean()){
                 Setpoint = 90.0;
             }else
-            if(RobotContainer.driverJoyStick.getYButton()){
+            if(RobotContainer.driverJoyStick.y().getAsBoolean()){
                 Setpoint = 0.0;
             }else
-            if(RobotContainer.driverJoyStick.getXButton()){
+            if(RobotContainer.driverJoyStick.x().getAsBoolean()){
                 Setpoint = -90.0;
             }
             if((m_drivetrainSubsystem.getAngleDegrees()-Setpoint)>180){

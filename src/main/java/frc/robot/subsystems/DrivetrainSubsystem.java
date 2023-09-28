@@ -167,6 +167,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_navx.zeroYaw();
     angleAdjust = 0;
   }
+  
   public void setGyroscope(double m_angle) {
         angleAdjust = m_angle;
       }

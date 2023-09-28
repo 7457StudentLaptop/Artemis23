@@ -11,32 +11,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.DriveWithLimelight;
-import frc.robot.commands.FreeClimb;
-import frc.robot.commands.FreeIntake;
-import frc.robot.commands.RunIntakeCommand;
-import frc.robot.commands.ScoreLow;
-import frc.robot.commands.SetFlywheelToLimelightShot;
-import frc.robot.commands.SetFlywheelToSetShot;
-import frc.robot.commands.SetFlywheelToSetShotHigh;
-import frc.robot.commands.SetFlywheelToSetShotLow;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.TurnForAngle;
-import frc.robot.commands.ZeroYaw;
-import frc.robot.commands.SetYaw;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+//import frc.robot.commands.ClimbOrient;
+//import frc.robot.commands.ClimberDown;
+//import frc.robot.commands.ClimberUp;
+import frc.robot.commands.*;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShootingSubsystem;
 import frc.robot.subsystems.VisionSubsytem;
 import frc.robot.subsystems.IndexerSubsystem;
-//import frc.robot.commands.ClimbOrient;
-//import frc.robot.commands.ClimberDown;
-//import frc.robot.commands.ClimberUp;
-import frc.robot.commands.DriveForTime;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -52,8 +37,8 @@ public class RobotContainer {
   private final ShootingSubsystem shooter = new ShootingSubsystem();
   private final VisionSubsytem vision = new VisionSubsytem();
   private final Climber climber = new Climber();
-  public final static XboxController driverJoyStick = new XboxController(0);
-  public final static XboxController operatorJoyStick = new XboxController(1);
+  public final static CommandXboxController driverJoyStick = new CommandXboxController(0);
+  public final static CommandXboxController operatorJoyStick = new CommandXboxController(1);
   public static Double speedmultiplier;
   private final SendableChooser<Command> autoChooser;
   /**
@@ -94,36 +79,23 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
+
   private void configureButtonBindings() {
-    // Back button zeros the gyroscope
-    // deprecated commands still work
-  
-    new Button(driverJoyStick::getStartButton).whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+    // Start button zeros the gyroscope
+    driverJoyStick.start().onTrue(new ZeroGyroScopeCommand(m_drivetrainSubsystem));
 
-   Button driverAButton = new JoystickButton(driverJoyStick, XboxController.Button.kA.value);
-    new Button(driverJoyStick::getBackButton).whenPressed(intake::PurgeIntake).whenReleased(intake::StopIntake);
-    new Button(driverJoyStick::getBackButton).whileHeld(indexer::PurgeIndexer).whenReleased(indexer::StopIndexer);
+    // driver commands
+    driverJoyStick.rightBumper().whileTrue(new PurgeIndexerCommand(indexer)); //score low
+    driverJoyStick.rightTrigger().whileTrue(new ShootIndexerCommand(indexer)); // score mid/high
+    //driverJoyStick.leftTrigger().whileTrue(new RunIntakeCommand(intake, indexer));
 
-
-    
-  
-    new Button(operatorJoyStick::getRightBumper).whileHeld(intake::RunIntake).whenReleased(intake::StopIntake);
-    new Button(operatorJoyStick::getRightBumper).whileHeld(indexer::RunIndexer).whenReleased(indexer::StopIndexer);
-    new Button(operatorJoyStick::getLeftBumper).whenPressed(intake::PurgeIntake).whenReleased(intake::StopIntake);
-   // new Button(driverJoyStick::getYButton).whenPressed(intake::RaiseIntake);
-   // new Button(driverJoyStick::getXButton).whenPressed(intake::LowerIntake);
-    new Button(driverJoyStick::getRightBumper).whileHeld(indexer::PurgeIndexer).whenReleased(indexer::StopIndexer);
-   // new Button(driverJoyStick::getRightBumper).whileHeld(indexer::RunIndexer).whenReleased(indexer::StopIndexer);
-    new Button(operatorJoyStick::getXButton).whenHeld(new SetFlywheelToSetShot(shooter)); // added for single joystick control
-    new Button(operatorJoyStick::getYButton).whenHeld(new SetFlywheelToSetShotHigh(shooter));
-    new Button(operatorJoyStick::getBButton).whenHeld(new SetFlywheelToSetShotLow(shooter));
-    Button driverRightTrigger = new Button(() -> driverJoyStick.getRightTriggerAxis() >= .5);
-     driverRightTrigger.whenPressed(indexer::ShootIndexer).whenReleased(indexer::StopIndexer);
-     // driverRightTrigger.whileHeld(new Shoot(shooter, indexer, vision)).whenReleased(indexer::StopIndexer);
-  Button driverLeftTrigger = new Button(() -> driverJoyStick.getLeftTriggerAxis() >= .5);
-     // driverLeftTrigger.whileHeld(intake::RunIntake).whenReleased(intake::StopIntake);
-     // driverLeftTrigger.whileHeld(indexer::RunIndexer).whenReleased(indexer::StopIndexer);
-     
+    // operator commands
+    operatorJoyStick.rightBumper().whileTrue(new RunIntakeCommand(intake, indexer));
+    operatorJoyStick.leftBumper().whileTrue(new PurgeIntakeCommand(intake, indexer));
+    operatorJoyStick.x().onTrue(new SetFlywheelToSetShot(shooter));
+    operatorJoyStick.y().onTrue(new SetFlywheelToSetShotHigh(shooter));
+    operatorJoyStick.b().onTrue(new SetFlywheelToSetShotLow(shooter));
      
   }
 

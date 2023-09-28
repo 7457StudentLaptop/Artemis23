@@ -156,7 +156,7 @@ public Command OneCubeMobilityBalanceAuto(){
   double scoretime = 2;
   double drivetime1 = 5; //backup time
   double waittime2 = 0.1;
-  double drivetime2 = 2.7; //back onto charge station time
+  double drivetime2 = 2.5; //back onto charge station time
   return new SequentialCommandGroup(
     new SetYaw(m_drivetrainSubsystem, 180),
     new WaitCommand(waittime),

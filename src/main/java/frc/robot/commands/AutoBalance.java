@@ -54,7 +54,7 @@ public class AutoBalance extends CommandBase {
     if (shouldStop) {
       drive.stop();
     } else {
-      if (Math.abs(angleDegrees) > 5){
+      if (Math.abs(angleDegrees) > 6){
         drive.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
               speedMetersPerSec * (angleDegrees > 0.0 ? -1.0 : 1.0),
@@ -64,7 +64,7 @@ public class AutoBalance extends CommandBase {
             } else{
               drive.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-              0.3*speedMetersPerSec * (angleDegrees > 0.0 ? -1.0 : 1.0),
+              0.25*speedMetersPerSec * (angleDegrees > 0.0 ? -1.0 : 1.0),
               0.0,
               0.0,
               drive.getGyroscopeRotation()));

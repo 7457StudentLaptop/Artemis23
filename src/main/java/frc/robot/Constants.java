@@ -49,7 +49,7 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3; // FIXED Set back right steer encoder ID
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(216.4);//208.7 // FIXED Measure and set back right steer offset
 
-    public static final Double BASE_SPEED_MULT = 0.6; //0.75 is standard
+    public static final Double BASE_SPEED_MULT = 0.75; //0.75 is standard
     public static final Double BOOST_SPEED_MULT = 1.0;
     public static final Double SLOW_SPEED_MULT = 0.15;
 

@@ -22,6 +22,7 @@ public class RunIntakeCommand extends CommandBase {
   @Override
   public void initialize() {
     intake.RunIntake();
+    indexer.RunIndexer();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
